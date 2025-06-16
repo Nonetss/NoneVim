@@ -1,65 +1,68 @@
+-- ~/.config/nvim/lua/plugins/avante.lua
 return {
   "yetone/avante.nvim",
   event = "VeryLazy",
-  version = false, -- Never set this value to "*"! Never!
+  version = false, -- ¡No pongas "*" aquí!
   opts = {
-    ---@alias Provider "claude" | "openai" | "azure" | "gemini" | "cohere" | "copilot" | string
-    providers = { -- <--- aquí el cambio importante
-      copilot = {
-        enable = true,
-        model = "claude-3.5-sonnet",
+    ------------------------------------------------------------------
+    -- Proveedor principal: DeepSeek (API compatible con OpenAI)     --
+    ------------------------------------------------------------------
+    provider = "deepseek",
+    providers = {
+      deepseek = {
+        -- Heredamos el parser y la lógica por defecto del proveedor OpenAI
+        __inherited_from = "openai",
+
+        -- Endpoint y autenticación
+        endpoint = "https://api.deepseek.com/v1",
+
+        -- Modelo que ofrece DeepSeek (ajusta si usas otro)
+        model = "deepseek-chat",
+
+        -- Ajustes extra para la request
+        extra_request_body = {
+          timeout = 30000, -- ms
+          temperature = 0.25,
+          max_completion_tokens = 8192,
+        },
       },
-    },
-    auto_suggestions_provider = "copilot",
-    behaviour = {
-      auto_suggestions = false,
-      auto_set_highlight_group = true,
-      auto_set_keymaps = true,
-      auto_apply_diff_after_generation = false,
-      support_paste_from_clipboard = false,
     },
   },
 
-  -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-  build = "make",
-  -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
+  -- Compilación (opcional – instala binarios si no existen)
+  build = "make", -- `make BUILD_FROM_SOURCE=true` si prefieres compilar
+
+  --------------------------------------------------------------------
+  -- Dependencias recomendadas (idénticas a la plantilla del repo)  --
+  --------------------------------------------------------------------
   dependencies = {
     "nvim-treesitter/nvim-treesitter",
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
-    --- The below dependencies are optional,
-    "echasnovski/mini.pick", -- for file_selector provider mini.pick
-    "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
-    "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
-    "ibhagwan/fzf-lua", -- for file_selector provider fzf
-    "stevearc/dressing.nvim", -- for input provider dressing
-    "folke/snacks.nvim", -- for input provider snacks
-    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-    "zbirenbaum/copilot.lua", -- for providers='copilot'
+    "echasnovski/mini.pick",
+    "nvim-telescope/telescope.nvim",
+    "hrsh7th/nvim-cmp",
+    "ibhagwan/fzf-lua",
+    "stevearc/dressing.nvim",
+    "folke/snacks.nvim",
+    "nvim-tree/nvim-web-devicons",
+    "zbirenbaum/copilot.lua",
     {
-      -- support for image pasting
       "HakonHarnes/img-clip.nvim",
       event = "VeryLazy",
       opts = {
-        -- recommended settings
         default = {
           embed_image_as_base64 = false,
           prompt_for_file_name = false,
-          drag_and_drop = {
-            insert_mode = true,
-          },
-          -- required for Windows users
+          drag_and_drop = { insert_mode = true },
           use_absolute_path = true,
         },
       },
     },
     {
-      -- Make sure to set this up properly if you have lazy=true
       "MeanderingProgrammer/render-markdown.nvim",
-      opts = {
-        file_types = { "markdown", "Avante" },
-      },
       ft = { "markdown", "Avante" },
+      opts = { file_types = { "markdown", "Avante" } },
     },
   },
 }
